@@ -33,7 +33,7 @@ def build_comment(dic):
 	if output_comment == '':
 		return False
 
-	output_comment += "---\n[^(View full results)]({0}) ^| [^(Message creator)](https://reddit.com/user/Mistress_Mamiya) ^| [^(GitHub)](https://github.com/MistressMamiya/hsauce_bot) ^| ^(Bad sauce? Reply with '!rm')".format(dic.get('SauceNAO'))
+	output_comment += "---\n^[View full results]({0}) | [^(GitHub)](https://github.com/MistressMamiya/hsauce_bot) ^| ^(Bad sauce? Reply with '!rm')".format(dic.get('SauceNAO')).replace(' ', '&#32;')
 
 	return output_comment
 
