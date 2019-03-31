@@ -1,6 +1,9 @@
 def build_comment(dic):
 	output_comment = ''
 
+	if dic.get('Title') is not None:
+		output_comment += '**Title:** {0}\n\n'.format(dic.get('Title'))
+
 	if (dic.get('Creator') or dic.get('Member') or dic.get('Author')) is not None:
 		output_comment += '**Creator:** '
 		if dic.get('Creator') is not None: output_comment += dic.get('Creator').title()+' | '
@@ -20,8 +23,14 @@ def build_comment(dic):
 			output_comment += ' [^({{Google it!}})](http://www.google.com/search?q={0}) [^({{Hentify it!}})](https://gelbooru.com/index.php?page=post&s=list&tags={1})'.format('+'.join(dic.get('Material').split(' ')), '_'.join(dic.get('Material').split(' ')))
 		output_comment += '\n\n'
 
-	if (dic.get('Pixiv_src') or dic.get('Gelbooru') or dic.get('Danbooru') or dic.get('Sankaku') or dic.get('DeviantArt_src')) is not None:
+	if (dic.get('Pixiv_src') or dic.get('Gelbooru') or dic.get('Danbooru') or dic.get('Sankaku') or dic.get('DeviantArt_src') or dic.get('gallery_number')) is not None:
 		output_comment += '**Image links:** '
+		#TODO make it pretty
+		if dic.get('gallery_number') is not None:
+			output_comment += '[nHentai](https://nhentai.net/g/{0}/'.format(dic.get('gallery_number'))
+			if dic.get('page_number') is not None:
+				output_comment += "{0}/".format(dic.get('page_number'))
+			output_comment += ') | '
 		if dic.get('Pixiv_src') is not None: output_comment += '[Pixiv]({0}) | '.format(dic.get('Pixiv_src'))
 		if dic.get('Gelbooru') is not None: output_comment += '[Gelbooru]({0}) | '.format(dic.get('Gelbooru'))
 		if dic.get('Danbooru') is not None: output_comment += '[Danbooru]({0}) | '.format(dic.get('Danbooru'))
@@ -33,7 +42,7 @@ def build_comment(dic):
 	if output_comment == '':
 		return False
 
-	output_comment += "---\n[^(View full results)]({0}) ^| [^(Message creator)](https://reddit.com/user/Mistress_Mamiya) ^| [^(GitHub)](https://github.com/MistressMamiya/hsauce_bot) ^| ^(Bad sauce? Reply with '!rm')".format(dic.get('SauceNAO'))
+	output_comment += "---\n^[View full results]({0}) | [(GitHub)](https://github.com/TheVexedGerman/hsauce_bot) | Bad sauce? [Message the mods](https://www.reddit.com/message/compose?to=%2Fr%2FHentaiSource)".format(dic.get('SauceNAO')).replace(' ', '&#32;')
 
 	return output_comment
 
