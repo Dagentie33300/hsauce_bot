@@ -9,22 +9,24 @@ def create_link_dictionary(soup):
 
 	results = soup.find_all(class_='result')
 	# print(results)
-	image_url = results[0].table.tr.td.div.a.img.get('src')
-	# print(image_url)
-	gallery_number = re.search(r'(?<=\/nhentai/)\d+', image_url)
-	if gallery_number:
-		dic.update({'gallery_number': gallery_number.group(0)})
-	page_number = re.search(r'(?<=\/)d+(?=\.jpg)', image_url)
-	if page_number:
-		dic.update({'page_number': page_number.group(0)})
+	# print(results[0]['id'])
+	if results[0].get('id') is None:
+		image_url = results[0].table.tr.td.div.a.img.get('src')
+		# print(image_url)
+		gallery_number = re.search(r'(?<=\/nhentai/)\d+', image_url)
+		if gallery_number:
+			dic.update({'gallery_number': gallery_number.group(0)})
+		page_number = re.search(r'(?<=\/)d+(?=\.jpg)', image_url)
+		if page_number:
+			dic.update({'page_number': page_number.group(0)})
 
-	title = results[0].table.tr.find('div', class_='resulttitle').strong.text
-	if title and title != 'Creator: ':
-		dic.update({'Title': title})
-	creator = results[0].table.tr.find('div', class_='resultcontentcolumn')
-	creator = re.search(r'(?<=Creator\(s\): <\/strong>).*?(?=<br\/>)', str(creator))
-	if creator:
-		dic.update({'Creator': creator.group(0)})
+		title = results[0].table.tr.find('div', class_='resulttitle').strong.text
+		if title and title != 'Creator: ':
+			dic.update({'Title': title})
+		creator = results[0].table.tr.find('div', class_='resultcontentcolumn')
+		creator = re.search(r'(?<=Creator\(s\): <\/strong>).*?(?=<br\/>)', str(creator))
+		if creator:
+			dic.update({'Creator': creator.group(0)})
 
 	creator = re.search(r"Creator: <\/strong>([\w\d\s\-_.*()\[\]]*)<br\/>", str(soup))
 	if creator and dic.get('Creator') == None:
@@ -70,7 +72,7 @@ def get_source_data(picture_url):
 
 if __name__ == "__main__":
 	print("This is also a standalone program. You can put the image url in the line below.")
-	# sauce = get_source_data('https://i.imgur.com/y1cJcOl.jpg')
+	# sauce = get_source_data('https://i.imgur.com/GH0Dofm.jpg')
 	# print(sauce)
 	sauces = ["https://i.imgur.com/y1cJcOl.jpg", "https://i.imgur.com/Z13SC8H.png", "https://i.imgur.com/62IVnsr.png", "https://i.imgur.com/uHcgE42.jpg", "https://i.imgur.com/DHbGpl1.jpg"]
 	for sauce in sauces:
