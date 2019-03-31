@@ -8,18 +8,23 @@ def create_link_dictionary(soup):
 	# Creator - boorus; Material - boorus; Author - DeviantArt; Member - Pixiv
 
 	results = soup.find_all(class_='result')
-	print(results)
+	# print(results)
 	image_url = results[0].table.tr.td.div.a.img.get('src')
-	print(image_url)
-	# gallery_number = re.search(r'(?<=\/nhentai/)\d+', image_url).group(0)
-	# print(gallery_number)
+	# print(image_url)
+	gallery_number = re.search(r'(?<=\/nhentai/)\d+', image_url)
+	if gallery_number:
+		dic.update({'gallery_number': gallery_number.group(0)})
+	page_number = re.search(r'(?<=\/)d+(?=\.jpg)', image_url)
+	if page_number:
+		dic.update({'page_number': page_number.group(0)})
+
 	title = results[0].table.tr.find('div', class_='resulttitle').strong.text
-	print(title)
+	if title and title != 'Creator: ':
+		dic.update({'Title': title})
 	creator = results[0].table.tr.find('div', class_='resultcontentcolumn')
-	print(creator)
-	creator = re.search(r'(?<=Creator\(s\)): <\/strong>.*?(?=<br>)', str(creator))
+	creator = re.search(r'(?<=Creator\(s\): <\/strong>).*?(?=<br\/>)', str(creator))
 	if creator:
-		print(creator.group(0))
+		dic.update({'Creator': creator.group(0)})
 
 	creator = re.search(r"Creator: <\/strong>([\w\d\s\-_.*()\[\]]*)<br\/>", str(soup))
 	if creator and dic.get('Creator') == None:
@@ -38,17 +43,17 @@ def create_link_dictionary(soup):
 		pg = link.get('href')
 		if re.search(r"[\w]+\.deviantart\.com", pg) and dic.get('DeviantArt_art') == None:
 			dic.update({'DeviantArt_art': pg})
-		if re.search(r"deviantart\.com\/view\/", pg) and dic.get('DeviantArt_src') == None:
+		elif re.search(r"deviantart\.com\/view\/", pg) and dic.get('DeviantArt_src') == None:
 			dic.update({'DeviantArt_src': pg})
-		if re.search(r"pixiv\.net\/member\.", pg) and dic.get('Pixiv_art') == None:
+		elif re.search(r"pixiv\.net\/member\.", pg) and dic.get('Pixiv_art') == None:
 			dic.update({'Pixiv_art': pg})
-		if re.search(r"pixiv\.net\/member_illust", pg) and dic.get('Pixiv_src') == None:
+		elif re.search(r"pixiv\.net\/member_illust", pg) and dic.get('Pixiv_src') == None:
 			dic.update({'Pixiv_src': pg})
-		if re.search(r"gelbooru\.com\/index\.php\?page", pg) and dic.get('Gelbooru') == None:
+		elif re.search(r"gelbooru\.com\/index\.php\?page", pg) and dic.get('Gelbooru') == None:
 			dic.update({'Gelbooru': pg})
-		if re.search(r"danbooru\.donmai\.us\/post\/", pg) and dic.get('Danbooru') == None:
+		elif re.search(r"danbooru\.donmai\.us\/post\/", pg) and dic.get('Danbooru') == None:
 			dic.update({'Danbooru': pg})
-		if re.search(r"chan\.sankakucomplex\.com\/post", pg) and dic.get('Sankaku') == None:
+		elif re.search(r"chan\.sankakucomplex\.com\/post", pg) and dic.get('Sankaku') == None:
 			dic.update({'Sankaku': pg})
 
 	return dic
@@ -65,8 +70,11 @@ def get_source_data(picture_url):
 
 if __name__ == "__main__":
 	print("This is also a standalone program. You can put the image url in the line below.")
-	sauce = get_source_data('https://i.imgur.com/Z13SC8H.png')
-	print(sauce)
+	# sauce = get_source_data('https://i.imgur.com/y1cJcOl.jpg')
+	# print(sauce)
+	sauces = ["https://i.imgur.com/y1cJcOl.jpg", "https://i.imgur.com/Z13SC8H.png", "https://i.imgur.com/62IVnsr.png", "https://i.imgur.com/uHcgE42.jpg", "https://i.imgur.com/DHbGpl1.jpg"]
+	for sauce in sauces:
+		print(get_source_data(sauce))
 
 	# with open('comm', 'w') as ot:
 	# 	for line in build_comment(sauce):
