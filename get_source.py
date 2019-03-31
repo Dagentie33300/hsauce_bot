@@ -7,6 +7,20 @@ def create_link_dictionary(soup):
 
 	# Creator - boorus; Material - boorus; Author - DeviantArt; Member - Pixiv
 
+	results = soup.find_all(class_='result')
+	print(results)
+	image_url = results[0].table.tr.td.div.a.img.get('src')
+	print(image_url)
+	# gallery_number = re.search(r'(?<=\/nhentai/)\d+', image_url).group(0)
+	# print(gallery_number)
+	title = results[0].table.tr.find('div', class_='resulttitle').strong.text
+	print(title)
+	creator = results[0].table.tr.find('div', class_='resultcontentcolumn')
+	print(creator)
+	creator = re.search(r'(?<=Creator\(s\)): <\/strong>.*?(?=<br>)', str(creator))
+	if creator:
+		print(creator.group(0))
+
 	creator = re.search(r"Creator: <\/strong>([\w\d\s\-_.*()\[\]]*)<br\/>", str(soup))
 	if creator and dic.get('Creator') == None:
 		dic.update({'Creator': creator.group(1)})
@@ -51,8 +65,9 @@ def get_source_data(picture_url):
 
 if __name__ == "__main__":
 	print("This is also a standalone program. You can put the image url in the line below.")
-	sauce = get_source_data('https://i.imgur.com/5iWlGz2.png')
-	
+	sauce = get_source_data('https://i.imgur.com/Z13SC8H.png')
+	print(sauce)
+
 	# with open('comm', 'w') as ot:
 	# 	for line in build_comment(sauce):
 	# 		ot.write(line)
