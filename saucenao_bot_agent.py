@@ -29,12 +29,17 @@ def run_bot():
 		# Since HentaiSource links get flaired and the volume of requests isn't too high checking flairs should be sufficent for restarts.
 		if i_submission.link_flair_text != 'Solved':
 			image_url = i_submission.url
-			if image_url[-4:] == '.jpg' or image_url[-4:] == '.png':
+			if image_url[-4:] == '.jpg' or image_url[-4:] == '.png' or image_url[-4:] == '.gif':
 				cook_sauce(image_url, i_submission)
 			# Handle non-direct imgur links https://imgur.com/... or https://i.imgur.com/...
 			# While not as computationally efficient, possibly replace with regex for non s links.
+			# Needs additional handling for .mp4 and gifv, so regex seems like an option.
 			elif (image_url[8:14] == 'imgur.' and image_url[17:20] != '/a/') or (image_url[8:16] == 'i.imgur.' and image_url[19:22] != '/a/'):
 				cook_sauce(image_url+'.jpg', i_submission)
+			# elif image_url[8:15] == 'gfycat.':
+			# 	cook_sauce('https://giant.'+image_url[8:]+'.gif', i_submission)
+			# elif image_url[8:21] == 'giant.gfycat.':
+			# 	cook_sauce(image_url+'.gif', i_submission)
 
 
 def flair_post(i_submission):
