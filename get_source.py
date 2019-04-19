@@ -2,6 +2,9 @@ from bs4 import BeautifulSoup
 import requests, re
 from comment_builder import build_comment
 
+MINIMUM_SIMILARITY_PERCENTAGE = 57
+MAX_DELTA = 20
+
 def create_link_dictionary(soup):
 	dic = {}
 	first = True
@@ -30,7 +33,7 @@ def create_link_dictionary(soup):
 			first = False
 		# Skip all further results if they are low quality matches
 		similarity_percentage = float(result.find(class_='resultsimilarityinfo').text[:-1])
-		if similarity_percentage < 50 or top_similarity_percentage-20>similarity_percentage:
+		if similarity_percentage < MINIMUM_SIMILARITY_PERCENTAGE or top_similarity_percentage-MAX_DELTA>similarity_percentage:
 			break
 
 		# print(similarity_percentage)
@@ -39,9 +42,9 @@ def create_link_dictionary(soup):
 		image_url = result.table.tr.td.div.a.img.get('src')
 		if re.search(r'/res/nhentai/', image_url):
 		#nHentai Block
-			print(image_url)
+			if not dic.get('type'):
+				dic.update({'type': 'nhentai'})
 			gallery_number = re.search(r'(?<=\/nhentai\/)\d+', image_url)
-			print(gallery_number)
 			if gallery_number:
 				dic.update({'gallery_number': gallery_number.group(0)})
 			page_number = re.search(r'(?<=\/)\d+(?=\.jpg)', image_url)
@@ -58,12 +61,14 @@ def create_link_dictionary(soup):
 
 		if re.search(r'/frames/', image_url):
 			#aniDB block
+			if not dic.get('type'):
+				dic.update({'type': 'anidb'})
 			title_candidate = result.find('div', class_='resulttitle')
 			#TODO fix supplemental info
 			title = title_candidate.strong.text
 			if title and dic.get('title') == None:
 				dic.update({'title': title})
-			supplemental_info = re.sub(r'<strong>.*?</strong>', '', title_candidate.text.replace('<small>', '').replace('</small>', ''))
+			supplemental_info = re.sub(r'\<strong\>.*?\<\/strong\>', '', title_candidate.text.replace('<small>', '').replace('</small>', ''))
 			if supplemental_info and dic.get('supplemental_info') == None:
 				dic.update({'supplemental_info': supplemental_info})
 
@@ -75,7 +80,7 @@ def create_link_dictionary(soup):
 				dic.update({'episode': episode.group(0)})
 			time_code = re.search(r'(?<=<strong>Est Time: </strong>).*?(?=<)', str(result))
 			if time_code and dic.get('time_code') == None:
-				dic.update({'time_code': episode.group(0)})
+				dic.update({'time_code': time_code.group(0)})
 			anidb_link = result.find('div', class_='resultmiscinfo').a.get('href')
 			if anidb_link and dic.get('anidb_link') == None:
 				dic.update({'anidb_link': anidb_link})
@@ -83,6 +88,8 @@ def create_link_dictionary(soup):
 
 		if re.search(r'/res/dA/', image_url):
 			#DeviantArt block
+			if not dic.get('type'):
+				dic.update({'type': 'da'})
 			title = result.find('div', class_='resulttitle')
 			if title and dic.get('title') == None:
 				dic.update({'title': title.strong.text})
@@ -100,6 +107,8 @@ def create_link_dictionary(soup):
 
 		if re.search(r'/res/pixiv/', image_url):
 			# Pixiv block
+			if not dic.get('type'):
+				dic.update({'type': 'pixiv'})
 			title = result.find('div', class_='resulttitle')
 			if title and dic.get('title') == None:
 				dic.update({'title': title.strong.text})
@@ -117,6 +126,8 @@ def create_link_dictionary(soup):
 				
 		if re.search(r'/booru/', image_url):
 			# 'Booru block
+			if not dic.get('type'):
+				dic.update({'type': 'booru'})
 			creator = result.find('div', class_='resulttitle')
 			if creator:
 				creator = re.search(r'(?<=Creator: <\/strong>).*?(?=<)', str(creator))
@@ -232,7 +243,7 @@ if __name__ == "__main__":
 	sauces = ["https://img2.gelbooru.com//images/7b/9f/7b9f93b720c8f4e559400d3100ad4c58.gif", "https://i.redd.it/p4oyfybedwr21.jpg", "https://i.imgur.com/MDKuBSQ.mp4", "https://i.imgur.com/MDKuBSQ.gif", "https://i.redd.it/nxlbtrgqvyq21.jpg"]
 	# sauces = ["https://giant.gfycat.com/EnragedGeneralCurassow.gif"]
 	# sauces = ["https://i.imgur.com/DHbGpl1.jpg"]
-	# sauces = ["https://i.imgur.com/62IVnsr.png"]
+	sauces = ["https://i.imgur.com/Z13SC8H.png"]
 	for sauce in sauces:
 		print(get_source_data(sauce))
 
