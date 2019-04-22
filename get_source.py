@@ -38,24 +38,24 @@ def create_link_dictionary(soup):
 
 		# print(similarity_percentage)
 
-		# Make assumption about content based on preview image url /frames/ = anidb, /dA/ = deviantart, /res/pixiv/ = pixiv, /booru/ = danbooru/gelbooru, /res/nhentai = nhentai
+		# Make assumption about content based on preview image url /frames/ = anidb, /dA/ = deviantart, /res/pixiv/ = pixiv, /booru/ = danbooru/gelbooru, /res/nhentai = nhentai, /res/fakku = FAKKU
 		image_url = result.table.tr.td.div.a.img.get('src')
 		if re.search(r'/res/nhentai/', image_url):
 		#nHentai Block
 			if not dic.get('type'):
 				dic.update({'type': 'nhentai'})
 			gallery_number = re.search(r'(?<=\/nhentai\/)\d+', image_url)
-			if gallery_number:
+			if gallery_number and not dic.get('gallery_number'):
 				dic.update({'gallery_number': gallery_number.group(0)})
 			page_number = re.search(r'(?<=\/)\d+(?=\.jpg)', image_url)
-			if page_number:
+			if page_number and not dic.get('page_number'):
 				dic.update({'page_number': page_number.group(0)})
 			title = result.find('div', class_='resulttitle').strong.text
-			if title and dic.get('title') == None:
+			if title and not dic.get('title'):
 				dic.update({'title': title})
 			creator = results[0].table.tr.find('div', class_='resultcontentcolumn')
 			creator = re.search(r'(?<=Creator\(s\): <\/strong>).*?(?=<br\/>)', str(creator))
-			if creator and dic.get('creator') == None:
+			if creator and not dic.get('creator'):
 				dic.update({'creator': creator.group(0)})
 			continue
 
@@ -66,23 +66,23 @@ def create_link_dictionary(soup):
 			title_candidate = result.find('div', class_='resulttitle')
 			#TODO fix supplemental info
 			title = title_candidate.strong.text
-			if title and dic.get('title') == None:
+			if title and not dic.get('title'):
 				dic.update({'title': title})
 			supplemental_info = re.sub(r'\<strong\>.*?\<\/strong\>', '', title_candidate.text.replace('<small>', '').replace('</small>', ''))
-			if supplemental_info and dic.get('supplemental_info') == None:
+			if supplemental_info and not dic.get('supplemental_info'):
 				dic.update({'supplemental_info': supplemental_info})
 
 			japanese_title = re.search(r'(?<=<strong>Title: </strong>).*?(?=<)', str(result))
-			if japanese_title and dic.get('japanese_title') == None:
+			if japanese_title and not dic.get('japanese_title'):
 				dic.update({'japanese_title': japanese_title.group(0)})
 			episode = re.search(r'(?<=<strong>Name: </strong>).*?(?=<)', str(result))
-			if episode and dic.get('episode') == None:
+			if episode and not dic.get('episode'):
 				dic.update({'episode': episode.group(0)})
 			time_code = re.search(r'(?<=<strong>Est Time: </strong>).*?(?=<)', str(result))
-			if time_code and dic.get('time_code') == None:
+			if time_code and not dic.get('time_code'):
 				dic.update({'time_code': time_code.group(0)})
 			anidb_link = result.find('div', class_='resultmiscinfo').a.get('href')
-			if anidb_link and dic.get('anidb_link') == None:
+			if anidb_link and not dic.get('anidb_link'):
 				dic.update({'anidb_link': anidb_link})
 			continue
 
@@ -91,17 +91,17 @@ def create_link_dictionary(soup):
 			if not dic.get('type'):
 				dic.update({'type': 'da'})
 			title = result.find('div', class_='resulttitle')
-			if title and dic.get('title') == None:
+			if title and not dic.get('title'):
 				dic.update({'title': title.strong.text})
 			resultcontentcolumn = result.find('div', class_='resultcontentcolumn').find_all('a')
 			if len(resultcontentcolumn) == 2:
-				if dic.get('da_link') == None:
+				if not dic.get('da_link'):
 					dic.update({'da_link': resultcontentcolumn[0].get('href')})
-				if dic.get('da_id') == None:
+				if not dic.get('da_id'):
 					dic.update({'da_id': resultcontentcolumn[0].text})
-				if dic.get('author_link') == None:
+				if not dic.get('author_link'):
 					dic.update({'author_link': resultcontentcolumn[1].get('href')})
-				if dic.get('author') == None:
+				if not dic.get('author'):
 					dic.update({'author': resultcontentcolumn[1].text})
 			continue
 
@@ -110,17 +110,17 @@ def create_link_dictionary(soup):
 			if not dic.get('type'):
 				dic.update({'type': 'pixiv'})
 			title = result.find('div', class_='resulttitle')
-			if title and dic.get('title') == None:
+			if title and not dic.get('title'):
 				dic.update({'title': title.strong.text})
 			resultcontentcolumn = result.find('div', class_='resultcontentcolumn').find_all('a')
 			if len(resultcontentcolumn) == 4:
-				if dic.get('pixiv_link') == None:
+				if not dic.get('pixiv_link'):
 					dic.update({'pixiv_link': resultcontentcolumn[0].get('href')})
-				if dic.get('pixiv_id') == None:
+				if not dic.get('pixiv_id'):
 					dic.update({'pixiv_id': resultcontentcolumn[0].text})
-				if dic.get('member_link') == None:
+				if not dic.get('member_link'):
 					dic.update({'member_link': resultcontentcolumn[2].get('href')})
-				if dic.get('member') == None:
+				if not dic.get('member'):
 					dic.update({'member': resultcontentcolumn[2].text})
 			continue
 				
@@ -131,36 +131,55 @@ def create_link_dictionary(soup):
 			creator = result.find('div', class_='resulttitle')
 			if creator:
 				creator = re.search(r'(?<=Creator: <\/strong>).*?(?=<)', str(creator))
-				if creator and dic.get('creator') == None:
+				if creator and not dic.get('creator'):
 					dic.update({'creator': creator.group(0)})
 			# print(creator)
 			material = result.find('div', class_='resultcontentcolumn')
 			if material:
 				material1 = re.search(r'(?<=Material: <\/strong>).*?(?=<)', str(material))
-				if material1 and dic.get('material') == None:
+				if material1 and not dic.get('material'):
 					dic.update({'material': material1.group(0)})
 				material = re.search(r'(?<=Source: </strong>).*?(?=<)', str(material))
-				if material and dic.get('material') == None:
+				if material and not dic.get('material'):
 					dic.update({'material': material.group(0)})
 			for link in result.find('div', class_='resultmiscinfo').find_all('a'):
 				link = link.get('href')
 				# print(link)
 				if link[8:17] == 'danbooru.':
-					if dic.get('danbooru_link') == None:
+					if not dic.get('danbooru_link'):
 						dic.update({'danbooru_link': link})
 						continue
 				if link[8:17] == 'gelbooru.':
-					if dic.get('gelbooru_link') == None:
+					if not dic.get('gelbooru_link'):
 						dic.update({'gelbooru_link': link})
 						continue
 				if link[8:28] == 'chan.sankakucomplex.':
-					if dic.get('sankaku_link') == None:
+					if not dic.get('sankaku_link'):
 						dic.update({'sankaku_link': link})
 						continue
 				if link[8:16] == 'yande.re':
-					if dic.get('yandere_link') == None:
+					if not dic.get('yandere_link'):
 						dic.update({'yandere_link': link})
 						continue
+			continue
+
+		if re.search(r'/res/fakku', image_url):
+			#FAKKU block
+			if not dic.get('type'):
+				dic.update({'type': 'fakku'})
+			result_content = result.find('div', class_='resultcontent')
+			title = result_content.find('div', class_='resulttitle')
+			if title:
+				if not dic.get('title'):
+					dic.update({'title': title.a.strong.text})
+				if not dic.get('fakku_link'):
+					dic.update({'fakku_link': title.a.get('href')})
+			artist = result_content.find('div', class_='resultcontentcolumn')
+			if artist:
+				if not dic.get('artist'):
+					dic.update({'artist': artist.a.strong.text})
+				if not dic.get('artist_link'):
+					dic.update({'artist_link': artist.a.get('href')})
 			continue
 
 		# print(title)
@@ -171,7 +190,7 @@ def get_source_data(picture_url):
 	print(picture_url)
 	resp = requests.get('http://saucenao.com/search.php?db=999&url='+picture_url)
 	# Needs to be parsed as xml since html parser adds inconvenient closing tags (pip install lxml)
-	soup = BeautifulSoup(resp.content, features='xml')
+	soup = BeautifulSoup(resp.content, features='lxml')
 	dic = create_link_dictionary(soup)
 	dic.update({'SauceNAO': 'http://saucenao.com/search.php?db=999&url='+picture_url})
 	
@@ -187,6 +206,6 @@ if __name__ == "__main__":
 	# sauces = ["https://i.imgur.com/GH0Dofm.jpg", "https://i.imgur.com/h3VhC7x.jpg", "https://i.imgur.com/LKxb5tS.png", "https://i.imgur.com/i9rH5bq.jpg", "https://i.imgur.com/er8mMZj.jpg"]
 	# Crashes
 	sauces = ["https://img2.gelbooru.com//images/7b/9f/7b9f93b720c8f4e559400d3100ad4c58.gif", "https://i.redd.it/p4oyfybedwr21.jpg", "https://i.imgur.com/MDKuBSQ.mp4", "https://i.imgur.com/MDKuBSQ.gif", "https://i.redd.it/nxlbtrgqvyq21.jpg"]
-	sauces = ["https://i.imgur.com/Z13SC8H.png"]
+	sauces = ["https://i.redd.it/f52thjtcy9t21.jpg"]
 	for sauce in sauces:
 		print(get_source_data(sauce))
