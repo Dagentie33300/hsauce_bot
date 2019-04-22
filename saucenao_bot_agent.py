@@ -1,4 +1,5 @@
-import praw
+import praw, requests
+from bs4 import BeautifulSoup
 from get_source import get_source_data
 from comment_builder import build_comment
 
@@ -41,16 +42,34 @@ def run_bot():
 					cook_sauce(image_url[:-4]+'.gif', i_submission)
 				else:
 					cook_sauce(image_url+'.jpg', i_submission)
-			# elif image_url[8:15] == 'gfycat.':
-			# 	cook_sauce('https://giant.'+image_url[8:]+'.gif', i_submission)
-			# elif image_url[8:21] == 'giant.gfycat.':
-			# 	cook_sauce(image_url+'.gif', i_submission)
+			elif image_url[8:15] == 'gfycat.':
+				image_url = try_gifycat_rewrite(image_url)
+				if image_url:
+					cook_sauce(image_url, i_submission)
+			elif image_url[8:21] == 'giant.gfycat.':
+				if image_url[-4:] == 'webm':
+					cook_sauce(image_url[:-4]+'gif', i_submission)
+				elif image_url[-4:] == '.mp4':
+					cook_sauce(image_url[:-4]+'.gif', i_submission)
 
 
 def flair_post(i_submission):
 	for choice in i_submission.flair.choices():
 		if choice['flair_text'] == 'Solved':
 			i_submission.flair.select(choice['flair_template_id'])
+
+
+def try_gifycat_rewrite(image_url):
+	link = ''
+	gifycat = requests.get(image_url)
+	soup = BeautifulSoup(gifycat.text, features="html.parser")
+	video = soup.find('video', class_='video media')
+	if video:
+		try:
+			link = f"{video.source.get('src')[:-5]}.gif"
+		except:
+			return ''
+	return link
 
 
 def main():
