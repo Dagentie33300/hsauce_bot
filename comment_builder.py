@@ -101,7 +101,7 @@ def build_comment(dic):
 			lesser_links += f"[FAKKU]({dic.get('fakku_link')})"
 	
 	if lesser_links:
-		output_comment += f"**Additional results**: {lesser_links}"
+		output_comment += f"**Additional results**: {lesser_links}\n\n"
 
 	# Handle no results
 	if not output_comment:
