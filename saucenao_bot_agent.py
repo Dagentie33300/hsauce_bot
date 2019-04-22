@@ -35,7 +35,12 @@ def run_bot():
 			# While not as computationally efficient, possibly replace with regex for non s links.
 			# Needs additional handling for .mp4 and gifv, so regex seems like an option.
 			elif (image_url[8:14] == 'imgur.' and image_url[17:20] != '/a/') or (image_url[8:16] == 'i.imgur.' and image_url[19:22] != '/a/'):
-				cook_sauce(image_url+'.jpg', i_submission)
+				if image_url[-5:] == ".gifv":
+					cook_sauce(image_url[:-5]+'.gif', i_submission)
+				elif image_url[-4:] == ".mp4":
+					cook_sauce(image_url[:-4]+'.gif', i_submission)
+				else:
+					cook_sauce(image_url+'.jpg', i_submission)
 			# elif image_url[8:15] == 'gfycat.':
 			# 	cook_sauce('https://giant.'+image_url[8:]+'.gif', i_submission)
 			# elif image_url[8:21] == 'giant.gfycat.':
