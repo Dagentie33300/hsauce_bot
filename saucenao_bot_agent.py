@@ -1,6 +1,6 @@
 import praw
 from get_source import get_source_data
-from comment_builder import build_comment, build_footprint
+from comment_builder import build_comment
 
 #The bot needs posts and flair mod permissions to function
 PARSED_SUBREDDIT = 'loli_tag_bot'
