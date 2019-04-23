@@ -107,7 +107,7 @@ def build_comment(dic):
 	if not output_comment:
 		return False
 
-	output_comment += f"---\n^^[Full results]({dic.get('SauceNAO')}) | [How to SauceNao](https://www.reddit.com/r/HentaiSource/comments/b7h28o/guide_reverse_search_images_cropping_saucenao/) | [Questions?](https://reddit.com/user/Kicken) | [Original GitHub](https://github.com/MistressMamiya/hsauce_bot) | [Forked GitHub](https://github.com/TheVexedGerman/hsauce_bot) | Bad sauce? [Message the mods](https://www.reddit.com/message/compose?to=%2Fr%2FHentaiSource)".replace(' ', '&#32;')
+	output_comment += f"---\n^^[Full results]({dic.get('SauceNAO')}) | [How to SauceNao](https://www.reddit.com/r/HentaiSource/comments/b7h28o/guide_reverse_search_images_cropping_saucenao/) | [Questions?](https://www.reddit.com/message/compose/?to=thevexedgerman&subject=[SauceNAO-Bot]) | [Original Bot](https://www.reddit.com/user/HentaiSauce_Bot) | [Forked GitHub](https://github.com/TheVexedGerman/hsauce_bot) | Bad sauce? [Message the mods](https://www.reddit.com/message/compose?to=%2Fr%2FHentaiSource)".replace(' ', '&#32;')
 
 	return output_comment
 
