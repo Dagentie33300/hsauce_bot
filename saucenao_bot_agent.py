@@ -4,12 +4,14 @@ from get_source import get_source_data
 from comment_builder import build_comment
 
 #The bot needs posts and flair mod permissions to function
-PARSED_SUBREDDIT = 'loli_tag_bot'
+# PARSED_SUBREDDIT = 'loli_tag_bot'
+PARSED_SUBREDDIT = 'HentaiSource'
 
 def authenticate():
     print("Authenticating...")
     reddit = praw.Reddit(
-        'thevexedgermanbot'
+        # 'thevexedgermanbot'
+		'HentaiSource_Bot'
     )
     print("Authenticated as {}".format(reddit.user.me()))
     return reddit
