@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests, re
 from comment_builder import build_comment
 
-MINIMUM_SIMILARITY_PERCENTAGE = 57
+MINIMUM_SIMILARITY_PERCENTAGE = 60
 MAX_DELTA = 20
 
 def create_link_dictionary(soup):
