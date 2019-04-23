@@ -85,20 +85,20 @@ def build_comment(dic):
 	lesser_links = ''
 	if not dic.get('type') == 'anidb':
 		if dic.get('anidb_link'):
-			lesser_links += f"[AniDB]({dic.get('anidb_link')})"
+			lesser_links += f"[AniDB]({dic.get('anidb_link')}) "
 	if not dic.get('type') == 'da':
 		if dic.get('da_id'):
-			lesser_links += f"{generate_seperator_bar(lesser_links)}[DeviantArt]({dic.get('da_link')})"
+			lesser_links += f"{generate_seperator_bar(lesser_links)}[DeviantArt]({dic.get('da_link')}) "
 	if not dic.get('type') == 'pixiv':
 		if dic.get('pixiv_id'):
-			lesser_links += f"{generate_seperator_bar(lesser_links)}[Pixiv]({dic.get('pixiv_link')})"
+			lesser_links += f"{generate_seperator_bar(lesser_links)}[Pixiv]({dic.get('pixiv_link')}) "
 	if not dic.get('type') == 'booru':
 		link_comment = generate_booru_links(dic)
 		if link_comment:
-			lesser_links += f"{generate_seperator_bar(lesser_links)}{link_comment}"
+			lesser_links += f"{generate_seperator_bar(lesser_links)}{link_comment} "
 	if not dic.get('type') == 'fakku':
 		if dic.get('fakku_link'):
-			lesser_links += f"[FAKKU]({dic.get('fakku_link')})"
+			lesser_links += f"{generate_seperator_bar(lesser_links)}[FAKKU]({dic.get('fakku_link')}) "
 	
 	if lesser_links:
 		output_comment += f"**Additional results**: {lesser_links}\n\n"
