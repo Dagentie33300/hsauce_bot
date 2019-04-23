@@ -1,4 +1,4 @@
-import praw, requests
+import praw, requests, re
 from bs4 import BeautifulSoup
 from get_source import get_source_data
 from comment_builder import build_comment
@@ -51,6 +51,10 @@ def run_bot():
 					cook_sauce(image_url[:-4]+'gif', i_submission)
 				elif image_url[-4:] == '.mp4':
 					cook_sauce(image_url[:-4]+'.gif', i_submission)
+			elif re.search(r'discord', image_url):
+				image_url = re.sub(r'\?width=\d+&height=\d+', '', image_url)
+				if image_url[-4:] == '.jpg' or image_url[-4:] == '.png' or image_url[-4:] == '.gif':
+					cook_sauce(image_url, i_submission)
 
 
 def flair_post(i_submission):
@@ -79,9 +83,9 @@ def main():
 
 
 if __name__ == '__main__':
-    # while True:
-    #     try:
-    #         main()
-    #     except Exception as e:
-    #         pass
-	main()
+    while True:
+        try:
+            main()
+        except Exception as e:
+            pass
+	# main()
