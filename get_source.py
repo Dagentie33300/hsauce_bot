@@ -13,17 +13,11 @@ def create_link_dictionary(soup):
 	
 	# Filters to only show relevant results.
 	results = soup.find_all('div', class_='result')
-	# print(results)
+
 	if not results:
 		return dic
 	
-	# print(results)
-	# for idx, val in enumerate(ints): use to find first entry
-	# print(results)
 	for result in results:
-		# print(result)
-		# with open("reslut.html", "a", encoding="utf-8") as f:
-		# 	f.write(f"{result}\n")
 		# Skip "hidden results" result
 		if result.get('id') is not None:
 			continue
@@ -33,12 +27,12 @@ def create_link_dictionary(soup):
 			first = False
 		# Skip all further results if they are low quality matches
 		similarity_percentage = float(result.find(class_='resultsimilarityinfo').text[:-1])
-		if similarity_percentage < MINIMUM_SIMILARITY_PERCENTAGE or top_similarity_percentage-MAX_DELTA>similarity_percentage:
+		if similarity_percentage < MINIMUM_SIMILARITY_PERCENTAGE or top_similarity_percentage-MAX_DELTA > similarity_percentage:
 			break
 
-		# print(similarity_percentage)
-
-		# Make assumption about content based on preview image url /frames/ = anidb, /dA/ = deviantart, /res/pixiv/ = pixiv, /booru/ = danbooru/gelbooru, /res/nhentai = nhentai, /res/fakku = FAKKU
+		# Make assumption about content based on preview image url /frames/ = anidb, /dA/ = deviantart,
+		# /res/pixiv/ = pixiv, /booru/ = danbooru/gelbooru, /res/nhentai = nhentai, /res/fakku = FAKKU,
+		# /res/mangadex = mangadex
 		image_url = result.table.tr.td.div.a.img.get('src')
 		if re.search(r'/res/nhentai/', image_url):
 		#nHentai Block
@@ -182,7 +176,49 @@ def create_link_dictionary(soup):
 					dic.update({'artist_link': artist.a.get('href')})
 			continue
 
-		# print(title)
+		if re.search(r'/res/mangadex', image_url):
+			# Mangadex block
+			if not dic.get('type'):
+				dic.update({'type': 'mangadex'})
+
+			page_number = re.search(r'\d+(?=\.jpg)', image_url)
+			if page_number and not dic.get('mangadex_page_number'):
+				dic.update({'mangadex_page_number': page_number.group(0)})
+
+			resultcontentcolumn = result.find('div', class_='resultcontentcolumn')
+			if resultcontentcolumn:
+				artist = re.search(r'(?<=Artist: <\/strong>).*?(?=<)', str(resultcontentcolumn))
+				author = re.search(r'(?<=Author: <\/strong>).*?(?=<)', str(resultcontentcolumn))
+				if artist and not dic.get('artist'):
+					dic.update({'artist': artist.group(0)})
+				if author and not dic.get('author'):
+					dic.update({'author': author.group(0)})
+
+			title = result.find('div', class_='resulttitle')
+			if title and not dic.get('title'):
+				text = ''
+				for entry in title.contents:
+					text += f'{entry}'
+				dic.update({'title': text.replace('<strong>', '').replace('</strong>', '').replace('<br/>', ' ')})
+
+			for link in result.find('div', class_='resultmiscinfo').find_all('a'):
+				link = link.get('href')
+				if link[8:20] == 'mangadex.org':
+					if not dic.get('mangadex_link'):
+						dic.update({'mangadex_link': link})
+						continue
+				if link[8:24] == 'www.mangaupdates':
+					if not dic.get('mangaupdates_link'):
+						dic.update({'mangaupdates_link': link})
+						continue
+				if link[8:30] == 'myanimelist.net/manga/':
+					if not dic.get('mal_manga_link'):
+						dic.update({'mal_manga_link': link})
+						continue
+
+			continue
+
+
 	return dic
 
 
@@ -206,6 +242,6 @@ if __name__ == "__main__":
 	# sauces = ["https://i.imgur.com/GH0Dofm.jpg", "https://i.imgur.com/h3VhC7x.jpg", "https://i.imgur.com/LKxb5tS.png", "https://i.imgur.com/i9rH5bq.jpg", "https://i.imgur.com/er8mMZj.jpg"]
 	# Crashes
 	sauces = ["https://img2.gelbooru.com//images/7b/9f/7b9f93b720c8f4e559400d3100ad4c58.gif", "https://i.redd.it/p4oyfybedwr21.jpg", "https://i.imgur.com/MDKuBSQ.mp4", "https://i.imgur.com/MDKuBSQ.gif", "https://i.redd.it/nxlbtrgqvyq21.jpg"]
-	sauces = ["https://i.redd.it/f52thjtcy9t21.jpg"]
+	sauces = ["https://i.redd.it/qxebsanz9au21.jpg"]
 	for sauce in sauces:
 		print(get_source_data(sauce))

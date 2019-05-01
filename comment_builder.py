@@ -80,6 +80,16 @@ def build_comment(dic):
 			else:
 				output_comment += f"**Artist**: {dic.get('artist')}\n\n"
 
+	if dic.get('type') == 'mangadex':
+		if dic.get('artist'):
+			output_comment += f"**Artist**: {dic.get('artist')}\n\n"
+		if dic.get('author'):
+			output_comment += f"**Author**: {dic.get('author')}\n\n"
+		link_comment = generate_mangadex_links(dic)
+		if link_comment:
+			output_comment += f"**Links**: {link_comment}\n\n"
+		if dic.get('mangadex_link') and dic.get('mangadex_page_number'):
+			output_comment += f"**Mangadex Page**: [{dic.get('mangadex_page_number')}]({dic.get('mangadex_link')}/{dic.get('mangadex_page_number')})\n\n"
 
 	#Add remaining links:
 	lesser_links = ''
@@ -99,6 +109,10 @@ def build_comment(dic):
 	if not dic.get('type') == 'fakku':
 		if dic.get('fakku_link'):
 			lesser_links += f"{generate_seperator_bar(lesser_links)}[FAKKU]({dic.get('fakku_link')}) "
+	if not dic.get('type') == 'mangadex':
+		link_comment = generate_mangadex_links(dic)
+		if link_comment:
+			lesser_links += f"{generate_seperator_bar(lesser_links)}{link_comment} "
 	
 	if lesser_links:
 		output_comment += f"**Additional results**: {lesser_links}\n\n"
@@ -133,4 +147,19 @@ def generate_booru_links(dic):
 			link_comment += f"{generate_seperator_bar(link_comment)}[Sankaku]({sankaku}) "
 		if yandere:
 			link_comment += f"{generate_seperator_bar(link_comment)}[Yandere]({yandere}) "
+	return link_comment
+
+def generate_mangadex_links(dic):
+	mangadex = dic.get('mangadex_link')
+	mangaupdates = dic.get('mangaupdates_link')
+	mal = dic.get('mal_manga_link')
+	
+	link_comment = ''
+	if mangadex or mangaupdates or mal:
+		if mangadex:
+			link_comment += f"[MangaDex]({mangadex}) "
+		if mangaupdates:
+			link_comment += f"{generate_seperator_bar(link_comment)}[Manga Updates]({mangaupdates}) "
+		if mal:
+			link_comment += f"{generate_seperator_bar(link_comment)}[MAL]({mal}) "
 	return link_comment
