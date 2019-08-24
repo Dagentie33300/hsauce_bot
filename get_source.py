@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests, re
 from comment_builder import build_comment
 
-MINIMUM_SIMILARITY_PERCENTAGE = 60
+MINIMUM_SIMILARITY_PERCENTAGE = 52
 MAX_DELTA = 20
 
 def create_link_dictionary(soup):
@@ -215,7 +215,6 @@ def create_link_dictionary(soup):
 					if not dic.get('mal_manga_link'):
 						dic.update({'mal_manga_link': link})
 						continue
-
 			continue
 
 
