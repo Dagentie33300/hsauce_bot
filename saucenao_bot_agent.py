@@ -44,6 +44,10 @@ def run_bot():
 					cook_sauce(image_url[:-4]+'.gif', i_submission)
 				else:
 					cook_sauce(image_url+'.jpg', i_submission)
+			elif (image_url[8:14] == 'imgur.' and image_url[17:20] == '/a/') or (image_url[8:16] == 'i.imgur.' and image_url[19:22] == '/a/'):
+				image_url = imgur_to_direct_link(image_url)
+				if image_url:
+					cook_sauce(image_url, i_submission)
 			elif image_url[8:15] == 'gfycat.':
 				image_url = try_gifycat_rewrite(image_url)
 				if image_url:
@@ -77,6 +81,16 @@ def try_gifycat_rewrite(image_url):
 		except:
 			return ''
 	return link
+
+
+def imgur_to_direct_link(image_url):
+	imgur = requests.get(image_url)
+	soup = BeautifulSoup(imgur.text, features="html.parser")
+	try:
+		direct_link = soup.find('link', rel="image_src").get('href')
+	except:
+		direct_link = ''
+	return direct_link
 
 
 def main():
