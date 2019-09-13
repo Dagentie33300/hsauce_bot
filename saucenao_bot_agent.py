@@ -72,7 +72,8 @@ def try_gifycat_rewrite(image_url):
 	video = soup.find('video', class_='video media')
 	if video:
 		try:
-			link = f"{video.source.get('src')[:-5]}.gif"
+			#  https://giant.gfycat.com/XXX.gif
+			link = f"https://giant.gfycat.com/{video.source.get('src')[26:-11]}.gif"
 		except:
 			return ''
 	return link
