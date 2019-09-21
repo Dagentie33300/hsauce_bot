@@ -19,18 +19,18 @@ def authenticate():
 
 def cook_sauce(image_url, i_submission):
 	sauce = get_source_data(image_url)
-	bot_reply = build_comment(sauce)
+	bot_reply = build_comment(sauce, i_submission)
 	if type(bot_reply) == str:
 		i_submission.reply(bot_reply).mod.distinguish(sticky=True)
 		flair_post(i_submission)
 		print("	Replied: Sauce has been processed [Comment stickied, post flaired]")
 
 
-def run_bot():
+def run_bot(already_replied):
 	for i_submission in reddit.subreddit(PARSED_SUBREDDIT).stream.submissions():
 		print("Found {}".format(i_submission.id))
 		# Since HentaiSource links get flaired and the volume of requests isn't too high checking flairs should be sufficent for restarts.
-		if i_submission.link_flair_text != 'Solved':
+		if i_submission.link_flair_text != 'Solved' and i_submission.id not in already_replied:
 			image_url = i_submission.url
 			if image_url[-4:] == '.jpg' or image_url[-4:] == '.png' or image_url[-4:] == '.gif':
 				cook_sauce(image_url, i_submission)
@@ -69,6 +69,12 @@ def flair_post(i_submission):
 			i_submission.flair.select(choice['flair_template_id'])
 
 
+def fetch_previous_post_ids():
+	id_set = set()
+	for comment in reddit.user.me().comments.new():
+		id_set.add(comment.link_id[3:])
+	return id_set
+
 def try_gifycat_rewrite(image_url):
 	link = ''
 	gifycat = requests.get(image_url)
@@ -96,7 +102,8 @@ def imgur_to_direct_link(image_url):
 def main():
 	global reddit
 	reddit = authenticate()
-	run_bot()
+	already_replied = fetch_previous_post_ids()
+	run_bot(already_replied)
 
 
 if __name__ == '__main__':

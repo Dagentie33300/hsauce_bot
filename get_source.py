@@ -224,11 +224,13 @@ def create_link_dictionary(soup):
 def get_source_data(picture_url):
 	print(picture_url)
 	resp = requests.get('http://saucenao.com/search.php?db=999&url='+picture_url)
+	print(f"Status code: {resp.status_code}")
 	# Needs to be parsed as xml since html parser adds inconvenient closing tags (pip install lxml)
 	soup = BeautifulSoup(resp.content, features='lxml')
 	dic = create_link_dictionary(soup)
 	dic.update({'SauceNAO': 'http://saucenao.com/search.php?db=999&url='+picture_url})
-	
+	print(f"Raw results: {dic}")
+
 	return dic
 
 if __name__ == "__main__":
@@ -242,5 +244,6 @@ if __name__ == "__main__":
 	# Crashes
 	sauces = ["https://img2.gelbooru.com//images/7b/9f/7b9f93b720c8f4e559400d3100ad4c58.gif", "https://i.redd.it/p4oyfybedwr21.jpg", "https://i.imgur.com/MDKuBSQ.mp4", "https://i.imgur.com/MDKuBSQ.gif", "https://i.redd.it/nxlbtrgqvyq21.jpg"]
 	sauces = ["https://i.redd.it/qxebsanz9au21.jpg"]
+	sauces = ["https://i.redd.it/twu33o6e4km31.jpg"]
 	for sauce in sauces:
 		print(get_source_data(sauce))
