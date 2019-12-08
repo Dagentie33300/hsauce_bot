@@ -122,7 +122,7 @@ def build_comment(dic, post):
 		return False
 
 	output_comment += f"---\n^^[Full results]({dic.get('SauceNAO')}) | [How to SauceNao](https://www.reddit.com/r/HentaiSource/comments/b7h28o/guide_reverse_search_images_cropping_saucenao/) | [Questions?](https://www.reddit.com/message/compose/?to=thevexedgerman&subject=[SauceNAO-Bot]) | [Original Bot](https://www.reddit.com/user/HentaiSauce_Bot) | [Forked GitHub](https://github.com/TheVexedGerman/hsauce_bot) | Bad sauce? [Message the mods](https://www.reddit.com/message/compose?to=%2Fr%2FHentaiSource)".replace(' ', '&#32;')
-	output_comment = f"Hey /u/{post.author} the following result was found on SauceNAO:\n\n{output_comment}"
+	output_comment = f"Hey /u/{post.author} the following result was found on SauceNAO [as per rule 10](https://www.reddit.com/r/HentaiSource/comments/bbr4ty/new_rule_10_use_saucenao_rule_11_check_reposts/):\n\n{output_comment}"
 	return output_comment
 
 
